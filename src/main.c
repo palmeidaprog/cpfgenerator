@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 int restoCPF(int x);
 void limpaBuffer();
@@ -55,18 +56,30 @@ int restoCPF(int x) {
 } 
 
 void novoCPF(char *cpf) {
-    int priDig = 0, segDig = 0, multiplicador = 10;
+    int priDig = 0, segDig = 0, multiplicador = 10, erro = 0;
+    char cpfInvalidos[10][11] = { "00000000000", "11111111111", "22222222222", 
+        "33333333333", "44444444444", "55555555555", "66666666666", 
+        "77777777777", "88888888888", "99999999999"};
 
-    for(int i = 0; i < 10; i++) {
-        cpf[i] = (rand() % 10) + '0';
-    }
+    do{ 
+        for(int i = 0; i < 10; i++) {
+            cpf[i] = (rand() % 10) + '0';
+        }
+
+        for(int i = 0; i < 10; ++i) {
+            if(strcmp(cpf, cpfInvalidos[i]) == 0) {
+                erro = 1;
+            }
+        }
+    } while(erro);
+    erro = 0;
 
     // acha primeiro digito
     for(int i = 0; i <= 8; i++) {
         priDig += ((cpf[i] - '0') * multiplicador);
         --multiplicador; 
     }
-    cpf[9] = (restoCPF(priDig) - '0');
+    cpf[9] = (restoCPF(priDig) + '0');
 
 
     // acha segundo digito
@@ -75,7 +88,7 @@ void novoCPF(char *cpf) {
         segDig += ((cpf[i] - '0') * multiplicador);
         --multiplicador; 
     }
-    cpf[10] = (restoCPF(segDig) - '0');
+    cpf[10] = (restoCPF(segDig) + '0');
     
 }
 
